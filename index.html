@@ -7,18 +7,6 @@
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
       <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
-      <style media="screen">
-      .wrap {
-        position: relative;
-        display: inline-block;
-      }
-
-      .wrap span {
-        position: absolute;
-        top: 0;
-        right: 0;
-      }
-      </style>
   </head>
   <body>
       <div class="card-panel teal lighten-2"><h5>Hello World!</h5></div>
@@ -54,7 +42,31 @@
           </ul>
         </div>
         <div class="col s9 #00b8d4 cyan accent-4" style="color:white;">
-          bbb
+          <div class="row">
+            <div class="col s12">
+              <i class="tiny material-icons">assessment</i>Previsiones
+            </div>
+            <div class="divider"></div>
+            <div class="col s12">
+              <div><nav style="height:34px;line-height:34px;">
+                <div class="nav-fixed">
+                  <ul id="nav-prevChart">
+                    <li><a href="#">Trafico</a></li>
+                    <li><a href="#">Conversion</a></li>
+                    <li><a href="#">JavaScript</a></li>
+                    <li><a href="#">Ventas</a></li>
+                  </ul>
+                </div>
+              </nav></div>
+              <div>
+                <a class="waves-effect waves-light btn">Trafico</a>
+                <a class="btn">Conversion</a>
+                <a class="btn">JavaScript</a>
+                <a class="btn">Ventas</a>
+              </div>
+              <div class="prevChart"></div>
+            </div>
+          </div>
         </div>
       </div>
    </body>
