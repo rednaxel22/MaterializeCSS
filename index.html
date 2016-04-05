@@ -5,13 +5,15 @@
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+    <link rel="stylesheet" href="chart.d3.css">
       <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+      <script src="http://d3js.org/d3.v3.min.js"></script>
   </head>
   <body>
       <div class="card-panel teal lighten-2"><h5>Hello World!</h5></div>
       <div class="row">
-        <div class="col s3 #01579b light-blue darken-4">
+        <div class="col s12 m4 l3 light-blue darken-4">
           <ul class="collection">
             <li class="collection-item"  style="padding:5px;">
               <div class="row" style="margin:0px;">
@@ -41,33 +43,31 @@
             </li>
           </ul>
         </div>
-        <div class="col s9 #00b8d4 cyan accent-4" style="color:white;">
+        <div class="col s12 m8 l9 cyan accent-4" style="color:white;">
           <div class="row">
             <div class="col s12">
               <i class="tiny material-icons">assessment</i>Previsiones
             </div>
             <div class="divider"></div>
             <div class="col s12">
-              <div><nav style="height:34px;line-height:34px;">
-                <div class="nav-fixed">
-                  <ul id="nav-prevChart">
-                    <li><a href="#">Trafico</a></li>
-                    <li><a href="#">Conversion</a></li>
-                    <li><a href="#">JavaScript</a></li>
-                    <li><a href="#">Ventas</a></li>
-                  </ul>
-                </div>
-              </nav></div>
               <div>
                 <a class="waves-effect waves-light btn">Trafico</a>
                 <a class="btn">Conversion</a>
                 <a class="btn">JavaScript</a>
                 <a class="btn">Ventas</a>
               </div>
-              <div class="prevChart"></div>
+              <div class="row">
+                <div id="chartContainerDiv" class="col s12">
+                  <div id="prevChart" class="white"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <script src="chart.d3.js"></script>
+      <script type="text/javascript">
+        // colChart('#prevChart', document.getElementById("chartContainerDiv").offsetWidth, 300);
+      </script>
    </body>
 </html>
