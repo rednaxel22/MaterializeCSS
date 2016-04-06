@@ -146,12 +146,10 @@
 //   });
 // };
 
-var barChart = (function(window,d3) {
+function lineChart(window,d3,container,mainDiv) {
 
   // d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus,paratransit,rail", init);
-
   var svg, data, x, y, xAxis, yAxis, dim, chartWrapper, line, path, margin = {}, width, height;
-
   d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus", init);
 
   function init (csv) {
@@ -173,7 +171,7 @@ var barChart = (function(window,d3) {
       .y(function(d) { return y(d.bus) });
 
     //initialize svg
-    svg = d3.select('#prevChart').append('svg');
+    svg = d3.select(container).append('svg');
     chartWrapper = svg.append('g');
     path = chartWrapper.append('path').datum(data).classed('line', true);
     chartWrapper.append('g').classed('x axis', true);
@@ -185,7 +183,7 @@ var barChart = (function(window,d3) {
  function render() {
 
    //get dimensions based on window size
-   updateDimensions(document.getElementById("chartContainerDiv").offsetWidth);
+   updateDimensions(document.getElementById(mainDiv).offsetWidth);
 
    //update x and y scales to new dimensions
    x.range([0, width]);
@@ -219,13 +217,13 @@ var barChart = (function(window,d3) {
    margin.bottom = 50;
 
    width = winWidth - margin.left - margin.right;
-   height = 500 - margin.top - margin.bottom;
+   //  height = 500 - margin.top - margin.bottom;
+   height = .4 * width; //aspect ratio is 0.7
+
  }
 
  return {
    render : render
  }
 
-})(window,d3);
-
-window.addEventListener('resize', barChart.render);
+};

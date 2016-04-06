@@ -67,7 +67,8 @@
       </div>
       <script src="chart.d3.js"></script>
       <script type="text/javascript">
-        // colChart('#prevChart', document.getElementById("chartContainerDiv").offsetWidth, 300);
+        var chart1 = lineChart(window,d3,'#prevChart','chartContainerDiv');
+        window.addEventListener('resize', chart1.render);
       </script>
    </body>
 </html>
