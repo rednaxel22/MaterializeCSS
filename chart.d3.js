@@ -1,9 +1,12 @@
 function lineChart(window,d3,container,mainDiv) {
 
   // d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus,paratransit,rail", init);
-  var svg, data, x, y, xAxis, yAxis, dim, chartWrapper, line, path, margin = {}, width, height;
+  var svg, data, x, y, xAxis, yAxis, dim, chartWrapper, line, path, margin = {}, width, height, locator, focus;
   d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus", init);
-  var breakPoint = 768
+  var breakPoint = 768,
+    bisectDate = d3.bisector(function(d) { return new Date(d.year); }).left,
+    formatValue = d3.format(",.0f"),
+    formatCurrency = function(d) { return formatValue(d); };
 
   function init (csv) {
     data = csv;
@@ -25,10 +28,33 @@ function lineChart(window,d3,container,mainDiv) {
 
     //initialize svg
     svg = d3.select(container).append('svg');
+
     chartWrapper = svg.append('g');
-    path = chartWrapper.append('path').datum(data).classed('line', true);
-    chartWrapper.append('g').classed('x axis', true);
+
+    chartWrapper.append('g')
+      .classed('x axis', true);
     chartWrapper.append('g').classed('y axis', true);
+
+    path = chartWrapper.append('path').datum(data).classed('line', true);
+
+    focus = chartWrapper.append('g')
+      .attr("class", "focus")
+      .style("display", "none");
+
+    focus.append("circle")
+        .attr("class","circle");
+
+    focus.append("text")
+        .attr("x", 9)
+        .attr("dy", ".35em");
+
+    chartWrapper.append("rect")
+        .attr("class", "overlay")
+        .on("mouseover", function() { focus.style("display", null); })
+        .on("mouseout", function() { focus.style("display", "none"); })
+        .on("mousemove", mousemove);
+
+    touchScale = d3.scale.linear();
 
     render();
   };
@@ -42,6 +68,7 @@ function lineChart(window,d3,container,mainDiv) {
    x.range([0, width]);
    y.range([height, 0]);
 
+  //  touchScale.domain([0,width]).range([0,data.length-1]).clamp(true);
 
    //update svg elements to new dimensions
    svg
@@ -49,6 +76,10 @@ function lineChart(window,d3,container,mainDiv) {
      .attr('height', height + margin.top + margin.bottom);
 
    chartWrapper.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+   chartWrapper.select("rect")
+       .attr("width", width)
+       .attr("height", height);
 
    //update the axis and line
    xAxis.scale(x);
@@ -75,6 +106,18 @@ function lineChart(window,d3,container,mainDiv) {
    height = .4 * width; //aspect ratio is 0.7
 
  }
+
+  function mousemove() {
+    var x0 = x.invert(d3.mouse(this)[0]),
+        i = bisectDate(data, x0, 1),
+        d0 = data[i - 1],
+        d1 = data[i];
+    console.log(d0);
+    var d = x0 - d0.year > d1.year - x0 ? d1 : d0;
+
+    focus.attr("transform", "translate(" + x(new Date(d.year)) + "," + y(d.bus) + ")");
+    focus.select("text").text(formatCurrency(d.bus));
+  }
 
  return {
    render : render
