@@ -1,6 +1,6 @@
 function lineChart(window,d3,container,mainDiv) {
 
-  d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus,rail", init);
+  d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus,rail,paratransit,total", init);
   var svg, data, x, y, xAxis, yAxis, dim, chartWrapper, line, path, margin = {}, width, height
       , locator, focus, color, transport, columnNames;
   // d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus&$where=year>1999", init);
@@ -82,8 +82,8 @@ function lineChart(window,d3,container,mainDiv) {
     //     .attr("class","d3-tip");
 
     focus.append("text")
-        .attr("x", 0)
-        .attr("y", -9)
+        .attr("x", 9)
+        .attr("dy", ".35em")
         .attr("class","d3-tip");
 
     chartWrapper.append("rect")
@@ -152,23 +152,40 @@ function lineChart(window,d3,container,mainDiv) {
 
  }
 
-  function mousemove() {
+  function mousemove(d) {
+    var coord = d3.mouse(this);
     var x0 = x.invert(d3.mouse(this)[0]),
         i = bisectDate(data, x0, 1),
         d0 = data[i - 1],
         d1 = data[i],
         d = x0 - d0.year > d1.year - x0 ? d1 : d0;
 
-    // focus.attr("transform", "translate(" + x(new Date(d.year)) + "," + y(d.rail) + ")");
-    // focus.select("text").text(formatCurrency(d.rail));
-
     focus.attr("transform", function(columnName){
         return "translate(" + x(new Date(d.year)) + "," + y(d[columnName.name]) + ")";
     });
 
-    focus.select("text").text(function(columnName){
-        return formatCurrency(d[columnName.name]);
-    });
+    focus.select("text")
+        .text(function(columnName){
+            return formatCurrency(d[columnName.name]);
+        })
+        .attr('x',function(){
+          if (x(new Date(d.year)) + this.getComputedTextLength()
+                + (document.getElementById(mainDiv).offsetWidth > breakPoint ? 119 : 9)
+                > document.getElementById(mainDiv).offsetWidth) {
+            return -1*this.getComputedTextLength()-9  ;
+          }else {
+            return 9;
+          }
+        })
+        .attr("text-anchor", function(){
+          if (x(new Date(d.year)) + this.getComputedTextLength()
+                + (document.getElementById(mainDiv).offsetWidth > breakPoint ? 119 : 9)
+                > document.getElementById(mainDiv).offsetWidth) {
+            "end";
+          }else {
+            "start";
+          }
+        });
 
   }
 
