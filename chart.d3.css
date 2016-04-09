@@ -11,7 +11,7 @@
     fill: steelblue;
 }
 .x.axis path {
-    display: none;
+    /*display: none;*/
 }
 
 .line {
@@ -30,4 +30,8 @@
 .overlay {
   fill: none;
   pointer-events: all;
+}
+
+.d3-tip {
+  
 }
