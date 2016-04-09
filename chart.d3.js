@@ -1,11 +1,11 @@
-function lineChart(window,d3,container,mainDiv) {
+function lineChart(window,d3,container,mainDiv,xValue) {
 
   d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus,rail,paratransit,total", init);
   var svg, data, x, y, xAxis, yAxis, dim, chartWrapper, line, path, margin = {}, width, height
       , locator, focus, color, transport, columnNames;
   // d3.csv("https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus&$where=year>1999", init);
   var breakPoint = 768,
-    bisectDate = d3.bisector(function(d) { return new Date(d.year); }).left,
+    bisectDate = d3.bisector(function(d) { return new Date(d[xValue]); }).left,
     formatValue = d3.format(",.0f"),
     formatCurrency = function(d) { return formatValue(d); };
 
@@ -13,7 +13,8 @@ function lineChart(window,d3,container,mainDiv) {
     data = csv;
 
     //initialize scales
-    xExtent = d3.extent(data, function(d,i) { return new Date(d.year) });
+    xExtent = d3.extent(data, function(d,i) { return new Date(d[xValue]) });
+
     yExtent = d3.extent(data, function(d,i) { return d.quantities });
     x = d3.time.scale().domain(xExtent);
     y = d3.scale.linear().domain(yExtent);
@@ -25,25 +26,25 @@ function lineChart(window,d3,container,mainDiv) {
 
     //the path generator for the line chart
     line = d3.svg.line()
-      .x(function(d) { return x(new Date(d.year)) })
+      .x(function(d) { return x(new Date(d[xValue])) })
       .y(function(d) { return y(d.quantities); });
       // .y(function(d) { return y(d.bus) });
 
     //initialize svg
     svg = d3.select(container).append('svg');
 
-    color.domain(d3.keys(data[0]).filter(function(key) { return key !== "year"; }));
+    color.domain(d3.keys(data[0]).filter(function(key) { return key !== xValue; }));
 
     var transports = color.domain().map(function(name) {
       return {
         name: name,
         values: data.map(function(d) {
-          return {year: d.year, quantities: +d[name]};
+          return {year: d[xValue], quantities: +d[name]};
         })
       };
     });
 
-    x.domain(d3.extent(data, function(d) { return new Date(d.year); }));
+    x.domain(d3.extent(data, function(d) { return new Date(d[xValue]); }));
 
     y.domain([
       d3.min(transports, function(c) { return d3.min(c.values, function(v) { return v.quantities; }); }),
@@ -75,11 +76,6 @@ function lineChart(window,d3,container,mainDiv) {
     focus.append("circle")
         .attr("class","circle")
         .style("stroke", function(d) { return color(d.name); });
-
-    // focus.append("text")
-    //     .attr("x", 0)
-    //     .attr("y", -9)
-    //     .attr("class","d3-tip");
 
     focus.append("text")
         .attr("x", 9)
@@ -148,7 +144,7 @@ function lineChart(window,d3,container,mainDiv) {
    margin.left = winWidth < breakPoint ? 0 : 80;
 
    width = winWidth - margin.left - margin.right;
-   height = .4 * width; //aspect ratio is 0.7
+   height = .4 * width; //aspect ratio is 0.4
 
  }
 
@@ -158,10 +154,10 @@ function lineChart(window,d3,container,mainDiv) {
         i = bisectDate(data, x0, 1),
         d0 = data[i - 1],
         d1 = data[i],
-        d = x0 - d0.year > d1.year - x0 ? d1 : d0;
+        d = x0 - d0[xValue] > d1[xValue] - x0 ? d1 : d0;
 
     focus.attr("transform", function(columnName){
-        return "translate(" + x(new Date(d.year)) + "," + y(d[columnName.name]) + ")";
+        return "translate(" + x(new Date(d[xValue])) + "," + y(d[columnName.name]) + ")";
     });
 
     focus.select("text")
@@ -169,7 +165,8 @@ function lineChart(window,d3,container,mainDiv) {
             return formatCurrency(d[columnName.name]);
         })
         .attr('x',function(){
-          if (x(new Date(d.year)) + this.getComputedTextLength()
+          //119 is get from adding the margin values when the windows is maximized and the space of 9 that we want.
+          if (x(new Date(d[xValue])) + this.getComputedTextLength()
                 + (document.getElementById(mainDiv).offsetWidth > breakPoint ? 119 : 9)
                 > document.getElementById(mainDiv).offsetWidth) {
             return -1*this.getComputedTextLength()-9  ;
@@ -178,7 +175,8 @@ function lineChart(window,d3,container,mainDiv) {
           }
         })
         .attr("text-anchor", function(){
-          if (x(new Date(d.year)) + this.getComputedTextLength()
+          //119 is get from adding the margin values when the windows is maximized and the space of 9 that we want.
+          if (x(new Date(d[xValue])) + this.getComputedTextLength()
                 + (document.getElementById(mainDiv).offsetWidth > breakPoint ? 119 : 9)
                 > document.getElementById(mainDiv).offsetWidth) {
             "end";
