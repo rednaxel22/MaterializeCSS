@@ -4,7 +4,7 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
   // d3.csv("https://gist.githubusercontent.com/rednaxel22/0abb1f459175c4d2f3627318ec931f19/raw/789a66f71c2983f356f8822b92c7a945bf132f37/temperatureprojection.csv", init);
   d3.csv(source, init);
   var svg, data, x, y, xAxis, yAxis, dim, chartWrapper, line, path, margin = {}, width, height
-      , locator, focus, color, transport, columnNames;
+      , locator, focus, color, transport, columnNames, maxWidth;
   var breakPoint = 768,
     bisectDate = d3.bisector(function(d) { return (d[xValue]); }).left,
     formatValue = d3.format(",.2f"),
@@ -54,10 +54,32 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
       d3.max(transports, function(c) { return d3.max(c.values, function(v) { return v.quantities; }); })
     ]);
 
+    maxWidth = 80;
+    // .each(function(d) {
+    //     maxWidth = Math.max(this.getBBox().width + yAxis.tickSize() + yAxis.tickPadding(), maxWidth);
+    // })
+
     chartWrapper = svg.append('g');
 
     chartWrapper.append('g').classed('x axis', true);
     chartWrapper.append('g').classed('y axis', true);
+
+    // chartWrapper.selectAll("text.foo").data(y.ticks())
+    //    .enter().append("text").text(function(d) { return y.tickFormat()(d); })
+    //    .each(function(d) {
+    //        maxWidth = Math.max(this.getBBox().width + yAxis.tickSize() + yAxis.tickPadding(), maxWidth);
+    //    })
+    //    .remove();
+
+    // transport = chartWrapper.selectAll(".transports")
+    //   .data(transports)
+    //   .enter().append("text").text(function(d) { return y.tickFormat()(d); })
+    //   .each(function(d) {
+    //       maxWidth = Math.max(this.getBBox().width + yAxis.tickSize() + yAxis.tickPadding(), maxWidth);
+    //   })
+    //   .remove();
+
+    // console.log(this.getBBox().width);
 
     transport = chartWrapper.selectAll(".transports")
       .data(transports)
@@ -103,8 +125,6 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
    x.range([0, width]);
    y.range([height, 0]);
 
-  //  touchScale.domain([0,width]).range([0,data.length-1]).clamp(true);
-
    //update svg elements to new dimensions
    svg
      .attr('width', width + margin.right + margin.left)
@@ -119,7 +139,7 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
    //update the axis and line
    xAxis.scale(x)
 
-   xAxis.ticks(Math.max(width/50, 1))
+   xAxis.ticks(Math.max(width/30, 1))
    yAxis.ticks(Math.max(height/20, 1))
 
    yAxis.scale(y).orient(document.getElementById(mainDiv).offsetWidth < breakPoint ? 'right' : 'left');
@@ -132,15 +152,14 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
      .call(yAxis);
 
   path.attr('d', function(d) { return line(d.values); });
-  // path.attr('d', line);
 
  }
 
  function updateDimensions(winWidth) {
-   margin.top = 20;
-   margin.bottom = 30;
+   margin.top = 10;
+   margin.bottom = 20;
    margin.right = winWidth < breakPoint ? 0 : 30;
-   margin.left = winWidth < breakPoint ? 0 : 80;
+   margin.left = winWidth < breakPoint ? 0 : maxWidth;
 
    width = winWidth - margin.left - margin.right;
    height = .4 * width; //aspect ratio is 0.4
