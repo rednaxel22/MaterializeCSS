@@ -55,31 +55,20 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
     ]);
 
     maxWidth = 80;
-    // .each(function(d) {
-    //     maxWidth = Math.max(this.getBBox().width + yAxis.tickSize() + yAxis.tickPadding(), maxWidth);
-    // })
 
     chartWrapper = svg.append('g');
 
     chartWrapper.append('g').classed('x axis', true);
     chartWrapper.append('g').classed('y axis', true);
 
-    // chartWrapper.selectAll("text.foo").data(y.ticks())
-    //    .enter().append("text").text(function(d) { return y.tickFormat()(d); })
-    //    .each(function(d) {
-    //        maxWidth = Math.max(this.getBBox().width + yAxis.tickSize() + yAxis.tickPadding(), maxWidth);
-    //    })
-    //    .remove();
-
-    // transport = chartWrapper.selectAll(".transports")
-    //   .data(transports)
-    //   .enter().append("text").text(function(d) { return y.tickFormat()(d); })
-    //   .each(function(d) {
-    //       maxWidth = Math.max(this.getBBox().width + yAxis.tickSize() + yAxis.tickPadding(), maxWidth);
-    //   })
-    //   .remove();
-
-    // console.log(this.getBBox().width);
+    chartWrapper.select('g')
+        .append("text")
+        .text(
+            y.tickFormat()(d3.max(transports, function(c) { return d3.max(c.values, function(v) { return v.quantities; }); }))
+        ).each( function(d) {
+            maxWidth = this.getBBox().width + yAxis.tickSize() + yAxis.tickPadding() + 9
+        })
+        .remove();
 
     transport = chartWrapper.selectAll(".transports")
       .data(transports)
@@ -139,6 +128,9 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
    //update the axis and line
    xAxis.scale(x)
 
+   //xAxis format
+   xAxis.tickFormat(d3.format(new Date()));
+
    xAxis.ticks(Math.max(width/30, 1))
    yAxis.ticks(Math.max(height/20, 1))
 
@@ -185,7 +177,7 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
         .attr('x',function(){
           //119 is get from adding the margin values when the windows is maximized and the space of 9 that we want.
           if (x((d[xValue])) + this.getComputedTextLength()
-                + (document.getElementById(mainDiv).offsetWidth > breakPoint ? 119 : 9)
+                + (document.getElementById(mainDiv).offsetWidth > breakPoint ? maxWidth : 9)
                 > document.getElementById(mainDiv).offsetWidth) {
             return -1*this.getComputedTextLength()-9  ;
           }else {
@@ -195,7 +187,7 @@ function lineChart(window,d3,container,mainDiv,source,xValue) {
         .attr("text-anchor", function(){
           //119 is get from adding the margin values when the windows is maximized and the space of 9 that we want.
           if (x((d[xValue])) + this.getComputedTextLength()
-                + (document.getElementById(mainDiv).offsetWidth > breakPoint ? 119 : 9)
+                + (document.getElementById(mainDiv).offsetWidth > breakPoint ? maxWidth : 9)
                 > document.getElementById(mainDiv).offsetWidth) {
             "end";
           }else {

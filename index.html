@@ -10,7 +10,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
       <script src="http://d3js.org/d3.v3.min.js"></script>
   </head>
-  <body>
+  <body onload="chartPrev('bus')">
       <div class="card-panel teal lighten-2"><h5>Hello World!</h5></div>
       <div class="row">
         <div class="col s12 m4 l3 light-blue darken-4">
@@ -51,10 +51,10 @@
             <div class="divider"></div>
             <div class="col s12">
               <div>
-                <a class="waves-effect waves-light btn">Trafico</a>
-                <a class="btn">Conversion</a>
-                <a class="btn">JavaScript</a>
-                <a class="btn">Ventas</a>
+                <a id="bus" class="waves-effect waves-light btn" onclick="chartPrev(this.id)">Bus</a>
+                <a id="rail" class="btn" onclick="chartPrev(this.id)">Rail</a>
+                <a id="paratransit" class="btn" onclick="chartPrev(this.id)">Paratransit</a>
+                <a id="total" class="btn" onclick="chartPrev(this.id)">Total</a>
               </div>
               <div class="row">
                 <div id="chartContainerDiv">
@@ -67,10 +67,16 @@
       </div>
       <script src="chart.d3.js"></script>
       <script type="text/javascript">
-        var source = "https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus,rail,paratransit,total"
-        // var source = "https://gist.githubusercontent.com/rednaxel22/0abb1f459175c4d2f3627318ec931f19/raw/789a66f71c2983f356f8822b92c7a945bf132f37/temperatureprojection.csv"
-        var chart1 = lineChart(window,d3,'#prevChart','chartContainerDiv',source,'year');
-        window.addEventListener('resize', chart1.render);
+
+        function chartPrev(d){
+          $("#prevChart").html("");
+          // var source = "https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year,bus,rail,paratransit,total"
+          var source = "https://data.cityofchicago.org/resource/w8km-9pzd.csv?$select=year," + d;
+          // var source = "https://gist.githubusercontent.com/rednaxel22/0abb1f459175c4d2f3627318ec931f19/raw/789a66f71c2983f356f8822b92c7a945bf132f37/temperatureprojection.csv"
+          var chart1 = lineChart(window,d3,'#prevChart','chartContainerDiv',source,'year');
+          window.addEventListener('resize', chart1.render);
+        }
+
       </script>
    </body>
 </html>
